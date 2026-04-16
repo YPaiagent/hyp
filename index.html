@@ -12,96 +12,69 @@
         input{width:100%;padding:14px;margin:10px 0;border-radius:8px;border:none;background:#0f2947;color:white}
         button{width:100%;padding:14px;margin:10px 0;border-radius:8px;border:none;background:#00d4ff;color:#0a192f;font-weight:bold}
         .btn2{background:#1a365d;color:#00d4ff}
-        .hide{display:none}
     </style>
 </head>
 <body>
-    <div class="box" id="page1">
-        <div class="title">🤖 AI助手登录</div>
-        <input id="uid" placeholder="请输入4位用户ID">
-        <button onclick="login()">登录</button>
-        <button class="btn2" onclick="go(2)">手机号登录</button>
-        <button class="btn2" onclick="go(3)">注册账号</button>
-    </div>
 
-    <div class="box" id="page2" style="display:none">
-        <div class="title">📱 手机号登录</div>
-        <input id="phone" placeholder="请输入11位手机号">
-        <button onclick="phoneLogin()">登录（无需验证码）</button>
-        <button class="btn2" onclick="go(1)">返回</button>
-    </div>
+<div class="box" id="page1">
+    <div class="title">🤖 AI助手登录</div>
+    <input id="uid" placeholder="输入4位ID登录">
+    <button onclick="login()">登录</button>
+    <button class="btn2" onclick="go(2)">手机号直接登录</button>
+    <button class="btn2" onclick="go(3)">注册</button>
+</div>
 
-    <div class="box" id="page3" style="display:none">
-        <div class="title">👤 注册新用户</div>
-        <input id="rid" placeholder="4位数字ID">
-        <input id="rname" placeholder="用户名">
-        <input id="rphone" placeholder="11位手机号">
-        <button onclick="reg()">注册</button>
-        <button class="btn2" onclick="go(1)">返回</button>
-    </div>
+<div class="box" id="page2" style="display:none">
+    <div class="title">📱 手机号登录</div>
+    <input id="phone" placeholder="输入11位手机号">
+    <button onclick="phoneLogin()">直接登录</button>
+    <button class="btn2" onclick="go(1)">返回</button>
+</div>
 
-    <div class="box" id="page4" style="display:none">
-        <div class="title">✅ 用户信息</div>
-        <div id="info"></div>
-        <button class="btn2" onclick="go(1)">退出登录</button>
-    </div>
+<div class="box" id="page3" style="display:none">
+    <div class="title">👤 注册</div>
+    <input id="rid" placeholder="4位ID">
+    <input id="rname" placeholder="用户名">
+    <input id="rphone" placeholder="手机号">
+    <button onclick="reg()">注册</button>
+    <button class="btn2" onclick="go(1)">返回</button>
+</div>
 
-    <script>
-        let users = [
-            {user_id:"1234", username:"管理员", phone:"13800138000"}
-        ];
+<div class="box" id="page4" style="display:none">
+    <div class="title">✅ 用户信息</div>
+    <div id="info"></div>
+    <button class="btn2" onclick="go(1)">退出</button>
+</div>
 
-        // 手机号脱敏：138****8888
-        function maskPhone(phone){
-            if(!phone || phone.length!=11) return phone;
-            return phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-        }
+<script>
+let users = [{user_id:"1234",username:"测试账号",phone:"13800000000"}];
 
-        function go(n){
-            document.querySelectorAll(".box").forEach(b=>b.style.display="none");
-            document.getElementById("page"+n).style.display="block";
-        }
+function go(n){
+    document.querySelectorAll(".box").forEach(p=>p.style.display="none");
+    document.getElementById("page"+n).style.display="block";
+}
 
-        function login(){
-            let id = document.getElementById("uid").value;
-            let u = users.find(x=>x.user_id==id);
-            if(u){
-                document.getElementById("info").innerHTML=`
-                    用户名：${u.username}<br>
-                    ID：${u.user_id}<br>
-                    手机号：${maskPhone(u.phone)}
-                `;
-                go(4);
-            }else{
-                alert("用户不存在");
-            }
-        }
+function mask(p){ return p.replace(/(\\d{3})\\d{4}(\\d{4})/,"$1****$2"); }
 
-        function phoneLogin(){
-            let phone = document.getElementById("phone").value;
-            let u = users.find(x=>x.phone==phone);
-            if(u){
-                document.getElementById("info").innerHTML=`
-                    用户名：${u.username}<br>
-                    ID：${u.user_id}<br>
-                    手机号：${maskPhone(u.phone)}
-                `;
-                go(4);
-            }else{
-                alert("手机号未注册");
-            }
-        }
+function login(){
+    let u=users.find(x=>x.user_id==document.getElementById("uid").value);
+    u?(document.getElementById("info").innerHTML=`用户名：${u.username}<br>ID：${u.user_id}<br>手机：${mask(u.phone)}`,go(4)):alert("用户不存在");
+}
 
-        function reg(){
-            let id = document.getElementById("rid").value;
-            let name = document.getElementById("rname").value;
-            let phone = document.getElementById("rphone").value;
-            if(id.length!=4 || phone.length!=11){alert("格式错误");return}
-            if(users.some(x=>x.user_id==id)){alert("ID已存在");return}
-            users.push({user_id:id, username:name, phone:phone});
-            alert("注册成功！");
-            go(1);
-        }
-    </script>
+function phoneLogin(){
+    let u=users.find(x=>x.phone==document.getElementById("phone").value);
+    u?(document.getElementById("info").innerHTML=`用户名：${u.username}<br>ID：${u.user_id}<br>手机：${mask(u.phone)}`,go(4)):alert("手机号未注册");
+}
+
+function reg(){
+    let id=document.getElementById("rid").value;
+    let name=document.getElementById("rname").value;
+    let phone=document.getElementById("rphone").value;
+    if(id.length!=4||phone.length!=11)return alert("格式错误");
+    if(users.some(x=>x.user_id==id))return alert("ID已存在");
+    users.push({user_id:id,username:name,phone:phone});
+    alert("注册成功！");go(1);
+}
+</script>
 </body>
 </html>
